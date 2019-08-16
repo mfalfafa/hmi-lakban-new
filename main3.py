@@ -730,6 +730,12 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
         self.all_data=''
         self.updateF=0
 
+        # Move to the center of window
+        qtRectangle = self.frameGeometry()
+        centerPoint = QDesktopWidget().availableGeometry().center()
+        qtRectangle.moveCenter(centerPoint)
+        self.move(qtRectangle.topLeft())
+
         # label
         time_lbl = self.lbl_time
 
