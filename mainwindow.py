@@ -37,9 +37,9 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(self.label_13.sizePolicy().hasHeightForWidth())
         self.label_13.setSizePolicy(sizePolicy)
         self.label_13.setMinimumSize(QtCore.QSize(0, 0))
-        self.label_13.setStyleSheet("color: rgb(255, 255, 255);\n"
-"font: 75 18pt \"Arial\";\n"
-"background-color: rgb(0, 0, 131);")
+        self.label_13.setStyleSheet("color: rgb(10, 10, 10);\n"
+"font: 75 12pt \"Arial\";\n"
+"background-color: rgba(255, 255, 255,0);")
         self.label_13.setAlignment(QtCore.Qt.AlignCenter)
         self.label_13.setObjectName("label_13")
         self.cb_set_date = QtWidgets.QComboBox(self.groupBox_2)
@@ -147,9 +147,9 @@ class Ui_MainWindow(object):
         font.setItalic(False)
         font.setWeight(9)
         self.label_11.setFont(font)
-        self.label_11.setStyleSheet("color: rgb(255, 255, 255);\n"
+        self.label_11.setStyleSheet("color: rgb(10, 10, 10);\n"
 "font: 75 12pt \"Arial\";\n"
-"background-color: rgb(0, 0, 131);")
+"background-color: rgba(255, 255, 255,0);")
         self.label_11.setAlignment(QtCore.Qt.AlignCenter)
         self.label_11.setObjectName("label_11")
         self.label_12 = QtWidgets.QLabel(self.groupBox)
@@ -167,17 +167,24 @@ class Ui_MainWindow(object):
         font.setItalic(False)
         font.setWeight(9)
         self.label_12.setFont(font)
-        self.label_12.setStyleSheet("color: rgb(255, 255, 255);\n"
+        self.label_12.setStyleSheet("color: rgb(10, 10, 10);\n"
 "font: 75 12pt \"Arial\";\n"
-"background-color: rgb(0, 0, 131);")
+"background-color: rgba(255, 255, 255,0);")
         self.label_12.setAlignment(QtCore.Qt.AlignCenter)
         self.label_12.setObjectName("label_12")
         self.pb_set_total = QtWidgets.QPushButton(self.groupBox)
         self.pb_set_total.setGeometry(QtCore.QRect(240, 310, 61, 61))
         self.pb_set_total.setMinimumSize(QtCore.QSize(50, 41))
         font = QtGui.QFont()
-        font.setPointSize(14)
+        font.setFamily("Arial")
+        font.setPointSize(18)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setWeight(9)
         self.pb_set_total.setFont(font)
+        self.pb_set_total.setStyleSheet("color: rgb(255, 255, 255);\n"
+"font: 75 18pt \"Arial\";\n"
+"background-color: rgb(0, 0, 131);")
         self.pb_set_total.setObjectName("pb_set_total")
         self.label_8 = QtWidgets.QLabel(self.groupBox)
         self.label_8.setGeometry(QtCore.QRect(10, 230, 101, 61))
@@ -194,9 +201,9 @@ class Ui_MainWindow(object):
         font.setItalic(False)
         font.setWeight(9)
         self.label_8.setFont(font)
-        self.label_8.setStyleSheet("color: rgb(255, 255, 255);\n"
+        self.label_8.setStyleSheet("color: rgb(10, 10, 10);\n"
 "font: 75 12pt \"Arial\";\n"
-"background-color: rgb(0, 0, 131);")
+"background-color: rgba(255, 255, 255,0);")
         self.label_8.setAlignment(QtCore.Qt.AlignCenter)
         self.label_8.setObjectName("label_8")
         self.lbl_total = QtWidgets.QLabel(self.groupBox)
@@ -226,17 +233,24 @@ class Ui_MainWindow(object):
         font.setItalic(False)
         font.setWeight(9)
         self.label_10.setFont(font)
-        self.label_10.setStyleSheet("color: rgb(255, 255, 255);\n"
+        self.label_10.setStyleSheet("color: rgb(10, 10, 10);\n"
 "font: 75 12pt \"Arial\";\n"
-"background-color: rgb(0, 0, 131);")
+"background-color: rgba(255, 255, 255,0);")
         self.label_10.setAlignment(QtCore.Qt.AlignCenter)
         self.label_10.setObjectName("label_10")
         self.pb_update = QtWidgets.QPushButton(self.groupBox)
         self.pb_update.setGeometry(QtCore.QRect(120, 380, 181, 61))
         self.pb_update.setMinimumSize(QtCore.QSize(100, 40))
         font = QtGui.QFont()
-        font.setPointSize(14)
+        font.setFamily("Arial")
+        font.setPointSize(18)
+        font.setBold(False)
+        font.setItalic(False)
+        font.setWeight(9)
         self.pb_update.setFont(font)
+        self.pb_update.setStyleSheet("color: rgb(255, 255, 255);\n"
+"font: 75 18pt \"Arial\";\n"
+"background-color: rgb(0, 0, 131);")
         self.pb_update.setObjectName("pb_update")
         self.lbl_po = QtWidgets.QLabel(self.groupBox)
         self.lbl_po.setGeometry(QtCore.QRect(120, 70, 181, 61))
@@ -302,19 +316,19 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.groupBox_2.setTitle(_translate("MainWindow", "Current total in PO"))
-        self.label_13.setText(_translate("MainWindow", "Date"))
+        self.label_13.setText(_translate("MainWindow", "Date :"))
         self.cb_set_date.setItemText(0, _translate("MainWindow", "11 November 2018"))
         self.cb_set_date.setItemText(1, _translate("MainWindow", "12 November 2018"))
         self.lbl_date.setText(_translate("MainWindow", "12/11/2019"))
         self.label.setText(_translate("MainWindow", "|"))
         self.lbl_time.setText(_translate("MainWindow", "09:45:55"))
         self.groupBox.setTitle(_translate("MainWindow", "Update total value of PO"))
-        self.label_11.setText(_translate("MainWindow", "Shift"))
-        self.label_12.setText(_translate("MainWindow", "PO"))
+        self.label_11.setText(_translate("MainWindow", "Shift :"))
+        self.label_12.setText(_translate("MainWindow", "PO :"))
         self.pb_set_total.setText(_translate("MainWindow", "SET"))
-        self.label_8.setText(_translate("MainWindow", "Line"))
+        self.label_8.setText(_translate("MainWindow", "Line :"))
         self.lbl_total.setText(_translate("MainWindow", "0"))
-        self.label_10.setText(_translate("MainWindow", "Total"))
+        self.label_10.setText(_translate("MainWindow", "Total :"))
         self.pb_update.setText(_translate("MainWindow", "UPDATE"))
         self.lbl_po.setText(_translate("MainWindow", "0"))
         self.cb_shift.setText(_translate("MainWindow", "-"))

@@ -11,12 +11,12 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
-        Form.resize(415, 220)
-        Form.setStyleSheet("z-index: 3;\n"
-"background: rgb(225, 225, 225);\n"
-"color: rgb(225, 225, 225);")
+        Form.resize(434, 279)
+        Form.setStyleSheet("background: rgb(225, 225, 225);\n"
+"color: rgb(225, 225, 225);\n"
+"border: 2px solid blue;")
         self.gridLayoutWidget = QtWidgets.QWidget(Form)
-        self.gridLayoutWidget.setGeometry(QtCore.QRect(0, 0, 376, 220))
+        self.gridLayoutWidget.setGeometry(QtCore.QRect(20, 40, 376, 220))
         self.gridLayoutWidget.setObjectName("gridLayoutWidget")
         self.gridLayout = QtWidgets.QGridLayout(self.gridLayoutWidget)
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
@@ -139,7 +139,7 @@ class Ui_Form(object):
         self.lbl_line.setObjectName("lbl_line")
         self.gridLayout.addWidget(self.lbl_line, 0, 0, 1, 1)
         self.pb_exit = QtWidgets.QPushButton(Form)
-        self.pb_exit.setGeometry(QtCore.QRect(375, 0, 40, 40))
+        self.pb_exit.setGeometry(QtCore.QRect(395, 0, 40, 40))
         font = QtGui.QFont()
         font.setPointSize(20)
         self.pb_exit.setFont(font)

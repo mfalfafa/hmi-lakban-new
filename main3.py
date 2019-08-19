@@ -40,6 +40,11 @@ reworkwin = ''
 numpadwin = ''
 popupwin = ''
 
+# ip: 192.168.3.2:8081/
+# MAC :
+# eth0 =  b8:27:eb:c3:8d:2f
+# wlan0 =  b8:27:eb:96:d8:7a
+
 # variables
 style_succeed = (
     "color: rgb(0, 79, 239);\nbackground-color: rgb(255, 255, 255);\nborder-color: rgb(0, 76, 229);\nfont: 75 10pt \"Arial\";")
@@ -121,11 +126,12 @@ class MonitorLineDataThread(QThread):
         while 1:
             data_ready = False
             try:
-                line_data = requests.get('http://ec2-13-250-42-181.ap-southeast-1.compute.amazonaws.com:8081/api/v1/rencana-produksi',
+                line_data = requests.get('http://192.168.3.2:8081/api/v1/rencana-produksi',
                                          auth=('', ''))
                 data_ready = True
                 print("Data")
-                self.signal.emit(line_data.text)
+                if(str(line_data.status_code)=='200' or str(line_data.status_code)=='201'):
+                    self.signal.emit(line_data.text)
                 # self.parent.updateF=0
             except:
                 print("Error in connection!")
@@ -145,14 +151,16 @@ class LoadLineDataThread(QThread):
         data_ready = False
         while not data_ready:
             try:
-                line_data = requests.get('http://ec2-13-250-42-181.ap-southeast-1.compute.amazonaws.com:8081/api/v1/rencana-produksi',
+                line_data = requests.get('http://192.168.3.2:8081/api/v1/rencana-produksi',
                                          auth=('', ''))
                 data_ready = True
                 print(line_data.text)
+                print(line_data.status_code)
+                if(str(line_data.status_code)=='200' or str(line_data.status_code)=='201'):
+                    self.signal.emit(line_data.text)
             except:
                 print("Error in connection!")
             time.sleep(1)
-        self.signal.emit(line_data.text)
 
 class Popup(QMainWindow, popup.Ui_Form):
     def load_finished(self, result):
@@ -317,15 +325,18 @@ class Rework(QMainWindow, rework.Ui_Form):
 
     def update_rework_val(self, total, rencanaProduksiId):
         head = {"Authorization":"Token token="}
-        url = 'http://ec2-13-250-42-181.ap-southeast-1.compute.amazonaws.com:8081/api/v1/lakban/rework'
+        url = 'http://192.168.3.2:8081/api/v1/lakban/rework'
         payload = {'total' : total, 'rencanaProduksiId' : rencanaProduksiId }
-        r = requests.patch(url, payload)
-        if(str(r.status_code)=="200" or str(r.status_code)=="201"):
-            print("Update success")
-            # aaa.lbl_total.setText(self.lbl_total.text())
-            self.parent.updateF=1
-        else:
-            print(r.status_code)
+        try:
+            r = requests.patch(url, payload)
+            if(str(r.status_code)=="200" or str(r.status_code)=="201"):
+                print("Update success")
+                # aaa.lbl_total.setText(self.lbl_total.text())
+                self.parent.updateF=1
+            else:
+                print(r.status_code)
+        except Exception as e:
+            print("Error : "+ str(e))
 
 
     def submit_rework(self):
@@ -626,13 +637,16 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
 
     def update_total_finish_good(self, total, rencanaProduksiId):
         global aaa, alldata
-        r = requests.post("http://ec2-13-250-42-181.ap-southeast-1.compute.amazonaws.com:8081/api/v1/lakban/finishgood", data={'total': total, 'rencanaProduksiId': rencanaProduksiId})
-        if(str(r.status_code)=="200" or str(r.status_code)=="201"):
-            print("Update success")
-            # aaa.lbl_total.setText(self.lbl_total.text())
-            self.updateF=1
-        else:
-            print(r.status_code)
+        try:
+            r = requests.post("http://192.168.3.2:8081/api/v1/lakban/finishgood", data={'total': total, 'rencanaProduksiId': rencanaProduksiId})
+            if(str(r.status_code)=="200" or str(r.status_code)=="201"):
+                print("Update success")
+                # aaa.lbl_total.setText(self.lbl_total.text())
+                self.updateF=1
+            else:
+                print(r.status_code)
+        except Exception as e:
+            print("Error : "+ str(e))
 
     def update(self):
         global aaa
@@ -714,6 +728,7 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
             self.updateCBDate(data_date)
         except:
             print("Error in JSON parse")
+            return
         all_data=data
         if(init_cb==False or self.updateF>-1):
             init_cb=True
