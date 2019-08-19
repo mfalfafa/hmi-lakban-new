@@ -77,6 +77,13 @@ class Ui_Form(object):
 "color: rgb(255, 255, 255);")
         self.pb_set_rework.setObjectName("pb_set_rework")
         self.horizontalLayout.addWidget(self.pb_set_rework)
+        self.txt_loading = QtWidgets.QLabel(Form)
+        self.txt_loading.setGeometry(QtCore.QRect(130, 320, 81, 21))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.txt_loading.setFont(font)
+        self.txt_loading.setStyleSheet("background-color: rgba(0,0,0,0);")
+        self.txt_loading.setObjectName("txt_loading")
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -92,4 +99,5 @@ class Ui_Form(object):
         self.exit_pb.setText(_translate("Form", "x"))
         self.rework_val.setText(_translate("Form", "1000"))
         self.pb_set_rework.setText(_translate("Form", "SET"))
+        self.txt_loading.setText(_translate("Form", "Loading..."))
 

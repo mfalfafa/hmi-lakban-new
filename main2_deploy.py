@@ -40,6 +40,11 @@ reworkwin = ''
 numpadwin = ''
 popupwin = ''
 
+# ip: 192.168.3.2:8081/
+# MAC :
+# eth0 =  b8:27:eb:c3:8d:2f
+# wlan0 =  b8:27:eb:96:d8:7a
+
 # variables
 style_succeed = (
     "color: rgb(0, 79, 239);\nbackground-color: rgb(255, 255, 255);\nborder-color: rgb(0, 76, 229);\nfont: 75 10pt \"Arial\";")
@@ -121,7 +126,7 @@ class MonitorLineDataThread(QThread):
         while 1:
             data_ready = False
             try:
-                line_data = requests.get('http://ec2-13-250-42-181.ap-southeast-1.compute.amazonaws.com:8081/api/v1/rencana-produksi',
+                line_data = requests.get('http://192.168.3.2:8081/api/v1/rencana-produksi',
                                          auth=('', ''))
                 data_ready = True
                 print("Data")
@@ -146,7 +151,7 @@ class LoadLineDataThread(QThread):
         data_ready = False
         while not data_ready:
             try:
-                line_data = requests.get('http://ec2-13-250-42-181.ap-southeast-1.compute.amazonaws.com:8081/api/v1/rencana-produksi',
+                line_data = requests.get('http://192.168.3.2:8081/api/v1/rencana-produksi',
                                          auth=('', ''))
                 data_ready = True
                 print(line_data.text)
@@ -320,7 +325,7 @@ class Rework(QMainWindow, rework.Ui_Form):
 
     def update_rework_val(self, total, rencanaProduksiId):
         head = {"Authorization":"Token token="}
-        url = 'http://ec2-13-250-42-181.ap-southeast-1.compute.amazonaws.com:8081/api/v1/lakban/rework'
+        url = 'http://192.168.3.2:8081/api/v1/lakban/rework'
         payload = {'total' : total, 'rencanaProduksiId' : rencanaProduksiId }
         try:
             r = requests.patch(url, payload)
@@ -626,14 +631,14 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
         aaa = parent
         self.parent = parent
         print(self.parent.lbl_total.text())
-
+        
     def change_val_(self, val):
         self.lbl_total.setText(str(val))
 
     def update_total_finish_good(self, total, rencanaProduksiId):
         global aaa, alldata
         try:
-            r = requests.post("http://ec2-13-250-42-181.ap-southeast-1.compute.amazonaws.com:8081/api/v1/lakban/finishgood", data={'total': total, 'rencanaProduksiId': rencanaProduksiId})
+            r = requests.post("http://192.168.3.2:8081/api/v1/lakban/finishgood", data={'total': total, 'rencanaProduksiId': rencanaProduksiId})
             if(str(r.status_code)=="200" or str(r.status_code)=="201"):
                 print("Update success")
                 # aaa.lbl_total.setText(self.lbl_total.text())
@@ -661,7 +666,6 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
         # Delete all data
         for i in reversed(range(self.gridLayout.count())):
             self.gridLayout.itemAt(i).widget().setParent(None)
-
         for i in range(len(alldata)):
             if(alldata[i]['date']==current_date):
                 self.numAddWidget = i + 1
