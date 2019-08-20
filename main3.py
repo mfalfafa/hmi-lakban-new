@@ -7,7 +7,7 @@ import threading
 
 # always seem to need this
 import sys
-
+import subprocess
 # For PostgreSQL database
 # import psycopg2
 
@@ -89,6 +89,8 @@ clockThread = ''
 # MAC :
 # eth0 =  b8:27:eb:c3:8d:2f
 # wlan0 =  b8:27:eb:96:d8:7a
+# Virtul keyboard
+# https://stackoverflow.com/questions/49306865/matchbox-keyboard-on-input-for-qlineedit-pyqt5
 
 class clockThread(threading.Thread):
     def __init__(self):
@@ -325,6 +327,20 @@ class Numpad(QMainWindow, numpad.Ui_Form):
 
 # Login window
 class Login(QMainWindow, login.Ui_Form):
+    def focusInEvent(self, event):
+        print("focus in event")
+        try:
+            subprocess.Popen(["matchbox-keyboard"])
+        except FileNotFoundError:
+            pass
+
+    def focusOutEvent(self, event):
+        print("focus Out event")
+        try:
+            subprocess.Popen(["killall","matchbox-keyboard"])
+        except:
+            print("Error")
+
     def login(self):
         global popupwin, JwToken, firstname, lastname
         # Loading text
@@ -358,6 +374,8 @@ class Login(QMainWindow, login.Ui_Form):
             self.txt_loading.setVisible(False)
             print("Error : "+ str(e))
 
+    def focus(self):
+        print("Focus")
 
     def __init__(self):
         # QMainWindow.__init__(self, parent)
@@ -370,6 +388,10 @@ class Login(QMainWindow, login.Ui_Form):
         self.move(qtRectangle.topLeft())
         self.pb_login.clicked.connect(self.login)
         self.txt_loading.setVisible(False)
+        self.input_username.focusInEvent =self.focusInEvent
+        # self.input_username.focusOutEvent =self.focusOutEvent
+        # self.input_pass.focusInEvent =self.focusInEvent
+        self.input_pass.focusOutEvent =self.focusOutEvent
 
 # create class for our Raspberry Pi GUI
 class Rework(QMainWindow, rework.Ui_Form):
