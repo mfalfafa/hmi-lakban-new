@@ -123,7 +123,7 @@ class MonitorLineDataThread(QThread):
         QThread.__init__(self, parent)
         self.signal.connect(parent.getData)
         self.parent=parent
-        print("Init Thread")
+        # print("Init Thread")
 
     # run method gets called when we start the thread
     def run(self):
@@ -131,10 +131,10 @@ class MonitorLineDataThread(QThread):
         while 1:
             data_ready = False
             try:
-                line_data = requests.get('http://192.168.3.2:8081/api/v1/rencana-produksi',
-                                         auth=('', ''))
+                headers = {'Authorization': 'Bearer ' + JwToken, 'content-type': 'application/json'}
+                line_data = requests.get("http://192.168.3.2:8081/api/v1/rencana-produksi", headers=headers)
                 data_ready = True
-                print("Data")
+                # print("Data")
                 if(str(line_data.status_code)=='200' or str(line_data.status_code)=='201'):
                     self.signal.emit(line_data.text)
                 # self.parent.updateF=0
@@ -148,7 +148,7 @@ class LoadLineDataThread(QThread):
     def __init__(self):
         QThread.__init__(self)
         # self.signal.connect(parent.getData)
-        print("Init Thread")
+        # print("Init Thread")
 
     # run method gets called when we start the thread
     def run(self):
@@ -156,15 +156,15 @@ class LoadLineDataThread(QThread):
         data_ready = False
         while not data_ready:
             try:
-                print(JwToken)
+                # print(JwToken)
                 headers = {'Authorization': 'token {}'.format(JwToken)}
                 # headers={'Authorization': 'access_token '+ JwToken}
                 auth = JWTAuth(str(JwToken))
                 headers = {'Authorization': 'Bearer ' + JwToken, 'content-type': 'application/json'}
                 line_data = requests.get("http://192.168.3.2:8081/api/v1/rencana-produksi", headers=headers)
                 data_ready = True
-                print(line_data.text)
-                print(line_data.status_code)
+                # print(line_data.text)
+                # print(line_data.status_code)
                 if(str(line_data.status_code)=='200' or str(line_data.status_code)=='201'):
                     self.signal.emit(line_data.text)
                 else:
@@ -177,7 +177,7 @@ class Popup(QMainWindow, popup.Ui_Form):
     def load_finished(self, result):
         global mainwin
         self.result=result
-        print("Load Finished")
+        # print("Load Finished")
         mainwin=MainWindow(None)
         mainwin.show()
         mainwin.getData(self.result)
@@ -201,7 +201,7 @@ class Popup(QMainWindow, popup.Ui_Form):
         # Connect the signal from the thread to the finished method
         self.load_thread.signal.connect(self.load_finished)
         self.load_thread.start()
-        print("Init Popup")
+        # print("Init Popup")
 
 class Numpad(QMainWindow, numpad.Ui_Form):
     def pb_1_click(self):
@@ -331,17 +331,17 @@ class Login(QMainWindow, login.Ui_Form):
         self.txt_loading.setVisible(True)
         username=self.input_username.text()
         password=self.input_pass.text()
-        print(username)
-        print(password)
+        # print(username)
+        # print(password)
         # Get token with username & password
         #Create authentication header
         headers = {'Authorization': 'JwToken' + ' ', 'content-type': 'application/json'}
         try:
             r = requests.post("http://192.168.3.2:8081/api/v1/auth/login", headers=headers, json={"username": username, "password": password, "roleId":1})
             if(str(r.status_code)=="200" or str(r.status_code)=="201"):
-                print("Login success")
-                print(r.text)
-                print(r.status_code)
+                # print("Login success")
+                # print(r.text)
+                # print(r.status_code)
                 data=json.loads(r.text)
                 # {"accessToken":"..-","user":{"id":2,"firstname":"Admin","lastname":"test","username":"admin","password":"$2b$10$tnnh6FzQE2BSH9PijLqOIuZBVLW2dq1yz6ZC.pyDKplKhfyLZR/MW","roleId":1}}
                 firstname=data['user']['firstname']
@@ -402,7 +402,7 @@ class Rework(QMainWindow, rework.Ui_Form):
         selisih = int(self.parent.lbl_total.text()) - int(self.rework_val.text())
         self.parent.lbl_total.setText(str(selisih))
         self.parent.parent.setEnabled(True)
-        print("selisih:"+ str(selisih))
+        # print("selisih:"+ str(selisih))
         self.close()
         self.update_rework_val(int(self.rework_val.text()), int(self.parent.rencanaProduksiId))
         # print(self.parent.rencanaProduksiId)
@@ -421,7 +421,7 @@ class Rework(QMainWindow, rework.Ui_Form):
         self.setupUi(self)  # gets defined in the UI file
         # Move to the center of window
         # Move to the center of window
-        print("Reworkkk")
+        # print("Reworkkk")
         self.parent = parent
         self.line_val.setText(str(self.parent.line))
         self.line = self.line_val.text()
@@ -586,7 +586,7 @@ class ExampleWidget2(QGroupBox):
         self.parent.cb_line.setText("-")
 
     def edit(self):
-        print(self.numAddWidget)
+        # print(self.numAddWidget)
         self.parent.groupBox.setEnabled(True)
         self.parent.lbl_po.setText(str(self.po))
         self.parent.lbl_total.setText(self.lbl_total.text())
@@ -595,13 +595,14 @@ class ExampleWidget2(QGroupBox):
         self.parent.change_val__(self)
 
     def change_val_(self, val):
-        print(self.lbl_total.text())
-        print(val)
+        # print(self.lbl_total.text())
+        # print(val)
         # self.lbl_total.setText(val)
         self.change_val.emit(1)
 
     def change_val__(self, val):
-        print(self.lbl_total.text())
+        pass
+        # print(self.lbl_total.text())
 
     def initSubject(self):
         # self.parent.pb_set_total.clicked.connect(self.set_total)
@@ -697,23 +698,27 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
         self.lbl_total.setText(str(val))
 
     def update_total_finish_good(self, total, rencanaProduksiId):
-        global aaa, alldata
+        global aaa, alldata, JwToken
         try:
+            # headers = {'Authorization': 'JwToken' + ' ', 'content-type': 'application/json'}
             r = requests.post("http://192.168.3.2:8081/api/v1/lakban/finishgood", data={'total': total, 'rencanaProduksiId': rencanaProduksiId})
             if(str(r.status_code)=="200" or str(r.status_code)=="201"):
-                print("Update success")
+                # print("Update success")
+                # print(r.text)
                 # aaa.lbl_total.setText(self.lbl_total.text())
                 self.updateF=1
             else:
-                print(r.status_code)
+                pass
+                # print(r.status_code)
         except Exception as e:
-            print("Error : "+ str(e))
+            pass
+            # print("Error : "+ str(e))
 
     def update(self):
         global aaa
-        print('Update : '+ aaa.lbl_po.text())
-        print('Rencana produksi ID : '+ str(aaa.rencanaProduksiId))
-        print('Update : '+ aaa.lbl_total.text())
+        # print('Update : '+ aaa.lbl_po.text())
+        # print('Rencana produksi ID : '+ str(aaa.rencanaProduksiId))
+        # print('Update : '+ aaa.lbl_total.text())
         self.update_total_finish_good(int(self.lbl_total.text()), int(aaa.rencanaProduksiId))
         # self.lbl_total.setText()
         # ExampleWidget2(self.numAddWidget, self.po, self.shift, self.total, self.line, self, self.pb_set_total).change_val_(self.lbl_total.text())
@@ -746,26 +751,26 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
     def updateCBDate(self, data):
         # new data from web
         new_data = sorted(set(data))
-        print("new data : "+ str(set(new_data)))
-        print(len(new_data))
+        # print("new data : "+ str(set(new_data)))
+        # print(len(new_data))
         # current data in cb
         current_data = sorted(set([self.cb_set_date.itemText(i) for i in range(self.cb_set_date.count())]))
-        print("current date: "+ str(current_data))
-        print(len(current_data))
+        # print("current date: "+ str(current_data))
+        # print(len(current_data))
         # get added data
         s = list(set(new_data) & set(current_data))
-        print("Diff: "+ str(s))
+        # print("Diff: "+ str(s))
         added_data = list(i for i in new_data if not (i in s))
         if len(new_data) == len(current_data):
             if len(s) == len(new_data):
                 # no update, data is same
                 pass
             else:
-                print("Update date 1")
+                # print("Update date 1")
                 # update cb
                 self.insertCBDate(sorted(new_data))
         else:
-            print("Update date 2")
+            # print("Update date 2")
             # update cb
             self.insertCBDate(sorted(new_data))
         # print(new_data)
@@ -785,10 +790,11 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
             for i in range(len(data)):
                 # Get PO NUMBER
                 data_date.append(data[i]['date'])
-            print(str(data_date))
+            # print(str(data_date))
             self.updateCBDate(data_date)
         except:
-            print("Error in JSON parse")
+            pass
+            # print("Error in JSON parse")
             return
         all_data=data
         if(init_cb==False or self.updateF>-1):
@@ -870,7 +876,7 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
         self.change_val.connect(self.change_val_)
         # Ready
         ready_setup = 1
-        print("Initt")
+        # print("Initt")
 
 # I feel better having one of these
 def main():
@@ -889,8 +895,9 @@ def main():
 try:
     clockThread = clockThread()
 except Exception as e:
-    print("Error: unable to start thread!")
-    print(str(e))
+    pass
+    # print("Error: unable to start thread!")
+    # print(str(e))
 # Start thread
 clockThread.start()
 
