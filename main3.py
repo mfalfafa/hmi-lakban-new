@@ -1,7 +1,7 @@
 # HTTP Request test
 # http://samuelofficial.id/db/nabati_hmi_test_lanius/get_line_data.php
 import requests
-from requests_jwt import JWTAuth
+# from requests_jwt import JWTAuth
 
 import threading
 
@@ -161,7 +161,7 @@ class LoadLineDataThread(QThread):
                 print(JwToken)
                 headers = {'Authorization': 'token {}'.format(JwToken)}
                 # headers={'Authorization': 'access_token '+ JwToken}
-                auth = JWTAuth(str(JwToken))
+                # auth = JWTAuth(str(JwToken))
                 headers = {'Authorization': 'Bearer ' + JwToken, 'content-type': 'application/json'}
                 line_data = requests.get("http://192.168.3.2:8081/api/v1/rencana-produksi", headers=headers)
                 data_ready = True
