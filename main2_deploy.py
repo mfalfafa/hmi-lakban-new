@@ -1,12 +1,13 @@
 # HTTP Request test
 # http://samuelofficial.id/db/nabati_hmi_test_lanius/get_line_data.php
 import requests
+# from requests_jwt import JWTAuth
 
 import threading
 
 # always seem to need this
 import sys
-
+import subprocess
 # For PostgreSQL database
 # import psycopg2
 
@@ -33,23 +34,22 @@ import mainwindow
 import rework
 import numpad
 import popup
+import login
 
 # Windows
 mainwin = ''
 reworkwin = ''
 numpadwin = ''
 popupwin = ''
-
-# ip: 192.168.3.2:8081/
-# MAC :
-# eth0 =  b8:27:eb:c3:8d:2f
-# wlan0 =  b8:27:eb:96:d8:7a
+loginwin=''
 
 # variables
 style_succeed = (
     "color: rgb(0, 79, 239);\nbackground-color: rgb(255, 255, 255);\nborder-color: rgb(0, 76, 229);\nfont: 75 10pt \"Arial\";")
+
 style_waiting = (
-    "color: rgb(243, 243, 15);\nbackground-color: rgb(255, 255, 255);\nborder-color: rgb(243, 243, 15);\nfont: 75 10pt \"Arial\";")
+    "color: rgb(0, 0, 255);\nbackground-color: rgb(255, 255, 255);\nborder-color: rgb(0, 0, 255);\nfont: 75 10pt \"Arial\";")
+
 style_failed = (
     "color: rgb(255, 15, 15);\nbackground-color: rgb(255, 255, 255);\nborder-color: rgb(255, 15, 15);\nfont: 75 10pt \"Arial\";")
 style_off = ("color: rgb(255, 0, 0);\n" + "font: 75 17pt \"Arial\";\n" + "background-color: rgb(214, 214, 214);")
@@ -62,6 +62,9 @@ data_ready = False
 numpad_f = 0
 all_data=''
 init_cb=False
+JwToken=''
+firstname=''
+lastname=''
 
 # components
 line_val = ''
@@ -82,7 +85,12 @@ scrollArea = ''
 
 # Python threads
 clockThread = ''
-
+# ip: 192.168.3.2:8081/
+# MAC :
+# eth0 =  b8:27:eb:c3:8d:2f
+# wlan0 =  b8:27:eb:96:d8:7a
+# Virtul keyboard
+# https://stackoverflow.com/questions/49306865/matchbox-keyboard-on-input-for-qlineedit-pyqt5
 
 class clockThread(threading.Thread):
     def __init__(self):
@@ -110,7 +118,6 @@ def getLineData():
             time_lbl.setText(current_time)
             time.sleep(1)
 
-
 class MonitorLineDataThread(QThread):
     signal = pyqtSignal(str)
 
@@ -126,8 +133,8 @@ class MonitorLineDataThread(QThread):
         while 1:
             data_ready = False
             try:
-                line_data = requests.get('http://192.168.3.2:8081/api/v1/rencana-produksi',
-                                         auth=('', ''))
+                headers = {'Authorization': 'Bearer ' + JwToken, 'content-type': 'application/json'}
+                line_data = requests.get("http://192.168.3.2:8081/api/v1/rencana-produksi", headers=headers)
                 data_ready = True
                 print("Data")
                 if(str(line_data.status_code)=='200' or str(line_data.status_code)=='201'):
@@ -147,19 +154,25 @@ class LoadLineDataThread(QThread):
 
     # run method gets called when we start the thread
     def run(self):
-        global line_data, data_ready
+        global line_data, data_ready, JwToken
         data_ready = False
         while not data_ready:
             try:
-                line_data = requests.get('http://192.168.3.2:8081/api/v1/rencana-produksi',
-                                         auth=('', ''))
+                print(JwToken)
+                headers = {'Authorization': 'token {}'.format(JwToken)}
+                # headers={'Authorization': 'access_token '+ JwToken}
+                # auth = JWTAuth(str(JwToken))
+                headers = {'Authorization': 'Bearer ' + JwToken, 'content-type': 'application/json'}
+                line_data = requests.get("http://192.168.3.2:8081/api/v1/rencana-produksi", headers=headers)
                 data_ready = True
                 print(line_data.text)
                 print(line_data.status_code)
                 if(str(line_data.status_code)=='200' or str(line_data.status_code)=='201'):
                     self.signal.emit(line_data.text)
+                else:
+                    print('Failed to retrieve data')
             except:
-                print("Error in connection!")
+                print("Error in connection while Load data!")
             time.sleep(1)
 
 class Popup(QMainWindow, popup.Ui_Form):
@@ -312,6 +325,73 @@ class Numpad(QMainWindow, numpad.Ui_Form):
         self.lbl_val.setText(str(self.parent.val))
         self.lbl_line.setText(str(self.parent.line))
 
+# Login window
+class Login(QMainWindow, login.Ui_Form):
+    def focusInEvent(self, event):
+        print("focus in event")
+        try:
+            subprocess.Popen(["matchbox-keyboard"])
+        except FileNotFoundError:
+            pass
+
+    def focusOutEvent(self, event):
+        print("focus Out event")
+        try:
+            subprocess.Popen(["killall","matchbox-keyboard"])
+        except:
+            print("Error")
+
+    def login(self):
+        global popupwin, JwToken, firstname, lastname
+        # Loading text
+        self.txt_loading.setVisible(True)
+        username=self.input_username.text()
+        password=self.input_pass.text()
+        print(username)
+        print(password)
+        # Get token with username & password
+        #Create authentication header
+        headers = {'Authorization': 'JwToken' + ' ', 'content-type': 'application/json'}
+        try:
+            r = requests.post("http://192.168.3.2:8081/api/v1/auth/login", headers=headers, json={"username": username, "password": password, "roleId":1})
+            if(str(r.status_code)=="200" or str(r.status_code)=="201"):
+                print("Login success")
+                print(r.text)
+                print(r.status_code)
+                data=json.loads(r.text)
+                # {"accessToken":"..-","user":{"id":2,"firstname":"Admin","lastname":"test","username":"admin","password":"$2b$10$tnnh6FzQE2BSH9PijLqOIuZBVLW2dq1yz6ZC.pyDKplKhfyLZR/MW","roleId":1}}
+                firstname=data['user']['firstname']
+                lastname=data['user']['lastname']
+                JwToken=data['accessToken']
+                # If success load the data
+                self.close()
+                popupwin = Popup()
+                popupwin.show()
+            else:
+                print(r.status_code)
+            self.txt_loading.setVisible(False)
+        except Exception as e:
+            self.txt_loading.setVisible(False)
+            print("Error : "+ str(e))
+
+    def focus(self):
+        print("Focus")
+
+    def __init__(self):
+        # QMainWindow.__init__(self, parent)
+        super(self.__class__, self).__init__()
+        self.setupUi(self)  # gets defined in the UI file
+        # Center point
+        qtRectangle = self.frameGeometry()
+        centerPoint = QDesktopWidget().availableGeometry().center()
+        qtRectangle.moveCenter(centerPoint)
+        self.move(qtRectangle.topLeft())
+        self.pb_login.clicked.connect(self.login)
+        self.txt_loading.setVisible(False)
+        self.input_username.focusInEvent =self.focusInEvent
+        # self.input_username.focusOutEvent =self.focusOutEvent
+        # self.input_pass.focusInEvent =self.focusInEvent
+        self.input_pass.focusOutEvent =self.focusOutEvent
 
 # create class for our Raspberry Pi GUI
 class Rework(QMainWindow, rework.Ui_Form):
@@ -335,11 +415,14 @@ class Rework(QMainWindow, rework.Ui_Form):
                 self.parent.updateF=1
             else:
                 print(r.status_code)
+            self.txt_loading.setVisible(False)
         except Exception as e:
             print("Error : "+ str(e))
+            self.txt_loading.setVisible(False)
 
 
     def submit_rework(self):
+        self.txt_loading.setVisible(True)
         self.parent.setEnabled(True)
         selisih = int(self.parent.lbl_total.text()) - int(self.rework_val.text())
         self.parent.lbl_total.setText(str(selisih))
@@ -367,6 +450,9 @@ class Rework(QMainWindow, rework.Ui_Form):
         self.parent = parent
         self.line_val.setText(str(self.parent.line))
         self.line = self.line_val.text()
+
+        self.txt_loading.setVisible(False)
+
         # Center point
         qtRectangle = self.frameGeometry()
         centerPoint = QDesktopWidget().availableGeometry().center()
@@ -631,25 +717,30 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
         aaa = parent
         self.parent = parent
         print(self.parent.lbl_total.text())
-        
+
     def change_val_(self, val):
         self.lbl_total.setText(str(val))
 
     def update_total_finish_good(self, total, rencanaProduksiId):
-        global aaa, alldata
+        global aaa, alldata, JwToken
         try:
+            # headers = {'Authorization': 'JwToken' + ' ', 'content-type': 'application/json'}
             r = requests.post("http://192.168.3.2:8081/api/v1/lakban/finishgood", data={'total': total, 'rencanaProduksiId': rencanaProduksiId})
             if(str(r.status_code)=="200" or str(r.status_code)=="201"):
                 print("Update success")
+                print(r.text)
                 # aaa.lbl_total.setText(self.lbl_total.text())
                 self.updateF=1
             else:
                 print(r.status_code)
+            self.txt_loading.setVisible(False)
         except Exception as e:
             print("Error : "+ str(e))
+            self.txt_loading.setVisible(False)
 
     def update(self):
         global aaa
+        self.txt_loading.setVisible(True)
         print('Update : '+ aaa.lbl_po.text())
         print('Rencana produksi ID : '+ str(aaa.rencanaProduksiId))
         print('Update : '+ aaa.lbl_total.text())
@@ -662,13 +753,29 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
         self.val = self.lbl_total.text()
         Numpad(self).show()
 
+    def extract_time(self, alldata):
+        try:
+            return int(alldata['date'])
+        except KeyError:
+            return 0
+
     def addWidget(self, current_date, alldata):
         # Delete all data
         for i in reversed(range(self.gridLayout.count())):
             self.gridLayout.itemAt(i).widget().setParent(None)
+
+        #====== sort of the date of data ======
+        alldata2=[]
+        if(len(alldata)>0):
+            alldata = sorted(alldata, key=lambda k: k['date'], reverse=True)
+            for data in alldata:
+                alldata2.append(data)
+            alldata=(alldata2)
+
+        self.numAddWidget=0
         for i in range(len(alldata)):
             if(alldata[i]['date']==current_date):
-                self.numAddWidget = i + 1
+                self.numAddWidget += 1
                 self.po = alldata[i]['po_number']
                 self.shift = alldata[i]['shiftId']
                 self.total = alldata[i]['b_finishgood_qty_karton']
@@ -677,6 +784,8 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
                 self.widget = ExampleWidget2(self.numAddWidget, self.po, self.shift, self.total, self.line, self,
                                              self.pb_set_total)
                 self.gridLayout.addWidget(self.widget)
+            else:
+                self.numAddWidget=0
 
         # Insert data based on the date that is selected
         # for i in range(len(self.data_po)):
@@ -734,7 +843,15 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
             self.updateF-=1
             self.addWidget(self.cb_set_date.currentText(), all_data)    
 
+    def logout(self):
+        global JwToken, loginwin
+        JwToken=''
+        self.close()
+        loginwin=Login()
+        loginwin.show()
+
     def __init__(self, parent):
+        global firstname, lastname
         global time_lbl, total_lbl, table_widget, data_line, line_cb
         global val_line23, val_line24, val_line25, val_line26, ready_setup, verticalLayoutWidget, scrollArea, verticalLayout
         super(self.__class__, self).__init__(parent)
@@ -743,6 +860,13 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
         self.parent = parent
         self.all_data=''
         self.updateF=0
+
+        # loading text
+        self.txt_loading.setVisible(False)
+        self.txt_loading_logout.setVisible(False)
+        self.pb_logout.clicked.connect(self.logout)
+
+        self.txt_username.setText(str(firstname)+ ' '+ str(lastname))
 
         # Move to the center of window
         qtRectangle = self.frameGeometry()
@@ -799,8 +923,10 @@ def main():
     global mainwin, reworkwin, numpadwin, popupwin
     # a new app instance
     app = QApplication(sys.argv)
-    popupwin = Popup()
-    popupwin.show()
+    # popupwin = Popup()
+    # popupwin.show()
+    login=Login()
+    login.show()
     # without this, the script exits immediately.
     sys.exit(app.exec_())
 
