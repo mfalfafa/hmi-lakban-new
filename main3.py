@@ -207,64 +207,84 @@ class Popup(QMainWindow, popup.Ui_Form):
 
 class Numpad(QMainWindow, numpad.Ui_Form):
     def pb_1_click(self):
-        if (self.lbl_val.text() == '0'):
-            self.lbl_val.setText('1')
-        else:
-            self.lbl_val.setText(self.lbl_val.text() + '1')
+        n=len(self.lbl_val.text())
+        if n<=9:
+            if (self.lbl_val.text() == '0'):
+                self.lbl_val.setText('1')
+            else:
+                self.lbl_val.setText(self.lbl_val.text() + '1')
 
     def pb_2_click(self):
-        if (self.lbl_val.text() == '0'):
-            self.lbl_val.setText('2')
-        else:
-            self.lbl_val.setText(self.lbl_val.text() + '2')
+        n=len(self.lbl_val.text())
+        if n<=9:
+            if (self.lbl_val.text() == '0'):
+                self.lbl_val.setText('2')
+            else:
+                self.lbl_val.setText(self.lbl_val.text() + '2')
 
     def pb_3_click(self):
-        if (self.lbl_val.text() == '0'):
-            self.lbl_val.setText('3')
-        else:
-            self.lbl_val.setText(self.lbl_val.text() + '3')
+        n=len(self.lbl_val.text())
+        if n<=9:
+            if (self.lbl_val.text() == '0'):
+                self.lbl_val.setText('3')
+            else:
+                self.lbl_val.setText(self.lbl_val.text() + '3')
 
     def pb_4_click(self):
-        if (self.lbl_val.text() == '0'):
-            self.lbl_val.setText('4')
-        else:
-            self.lbl_val.setText(self.lbl_val.text() + '4')
+        n=len(self.lbl_val.text())
+        if n<=9:
+            if (self.lbl_val.text() == '0'):
+                self.lbl_val.setText('4')
+            else:
+                self.lbl_val.setText(self.lbl_val.text() + '4')
 
     def pb_5_click(self):
-        if (self.lbl_val.text() == '0'):
-            self.lbl_val.setText('5')
-        else:
-            self.lbl_val.setText(self.lbl_val.text() + '5')
+        n=len(self.lbl_val.text())
+        if n<=9:
+            if (self.lbl_val.text() == '0'):
+                self.lbl_val.setText('5')
+            else:
+                self.lbl_val.setText(self.lbl_val.text() + '5')
 
     def pb_6_click(self):
-        if (self.lbl_val.text() == '0'):
-            self.lbl_val.setText('6')
-        else:
-            self.lbl_val.setText(self.lbl_val.text() + '6')
+        n=len(self.lbl_val.text())
+        if n<=9:
+            if (self.lbl_val.text() == '0'):
+                self.lbl_val.setText('6')
+            else:
+                self.lbl_val.setText(self.lbl_val.text() + '6')
 
     def pb_7_click(self):
-        if (self.lbl_val.text() == '0'):
-            self.lbl_val.setText('7')
-        else:
-            self.lbl_val.setText(self.lbl_val.text() + '7')
+        n=len(self.lbl_val.text())
+        if n<=9:
+            if (self.lbl_val.text() == '0'):
+                self.lbl_val.setText('7')
+            else:
+                self.lbl_val.setText(self.lbl_val.text() + '7')
 
     def pb_8_click(self):
-        if (self.lbl_val.text() == '0'):
-            self.lbl_val.setText('8')
-        else:
-            self.lbl_val.setText(self.lbl_val.text() + '8')
+        n=len(self.lbl_val.text())
+        if n<=9:
+            if (self.lbl_val.text() == '0'):
+                self.lbl_val.setText('8')
+            else:
+                self.lbl_val.setText(self.lbl_val.text() + '8')
 
     def pb_9_click(self):
-        if (self.lbl_val.text() == '0'):
-            self.lbl_val.setText('9')
-        else:
-            self.lbl_val.setText(self.lbl_val.text() + '9')
+        n=len(self.lbl_val.text())
+        if n<=9:
+            if (self.lbl_val.text() == '0'):
+                self.lbl_val.setText('9')
+            else:
+                self.lbl_val.setText(self.lbl_val.text() + '9')
 
     def pb_0_click(self):
-        if (self.lbl_val.text() == '0'):
-            self.lbl_val.setText('0')
-        else:
-            self.lbl_val.setText(self.lbl_val.text() + '0')
+        n=len(self.lbl_val.text())
+        if n<=9:
+            if (self.lbl_val.text() == '0'):
+                self.lbl_val.setText('0')
+            else:
+                self.lbl_val.setText(self.lbl_val.text() + '0')
 
     def pb_enter_click(self):
         # self.parent.rework_val.setText(self.lbl_val.text())
@@ -405,7 +425,7 @@ class Rework(QMainWindow, rework.Ui_Form):
 
     def update_rework_val(self, total, rencanaProduksiId):
         head = {"Authorization":"Token token="}
-        url = 'http://192.168.3.2:8081/api/v1/lakban/rework'
+        url = 'http://192.168.13.2:8081/api/v1/lakban/rework'
         payload = {'total' : total, 'rencanaProduksiId' : rencanaProduksiId }
         try:
             r = requests.patch(url, payload)
@@ -725,7 +745,7 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
         global aaa, alldata, JwToken
         try:
             # headers = {'Authorization': 'JwToken' + ' ', 'content-type': 'application/json'}
-            r = requests.post("http://192.168.3.2:8081/api/v1/lakban/finishgood", data={'total': total, 'rencanaProduksiId': rencanaProduksiId})
+            r = requests.post("http://192.168.13.2:8081/api/v1/lakban/finishgood", data={'total': total, 'rencanaProduksiId': rencanaProduksiId})
             if(str(r.status_code)=="200" or str(r.status_code)=="201"):
                 print("Update success")
                 print(r.text)
