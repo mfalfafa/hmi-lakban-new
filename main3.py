@@ -839,9 +839,15 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
 
     def insertCBDate(self, data):
         self.cb_set_date.clear()
-        for i in range(len(data)):
-            self.cb_set_date.addItem(data[i])
-        self.cb_set_date.setCurrentIndex(0)
+        n=len(data)
+        if n<=2:
+            for i in range(n):
+                self.cb_set_date.addItem(data[i])
+            self.cb_set_date.setCurrentIndex(0)
+        else:
+            for i in range(2):
+                self.cb_set_date.addItem(data[(n-1)-i])
+            self.cb_set_date.setCurrentIndex(0)
 
     def getData(self, data):
         global all_data, init_cb
