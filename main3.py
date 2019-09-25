@@ -389,9 +389,9 @@ class Login(QMainWindow, login.Ui_Form):
         self.pb_login.clicked.connect(self.login)
         self.txt_loading.setVisible(False)
         self.input_username.focusInEvent =self.focusInEvent
-        # self.input_username.focusOutEvent =self.focusOutEvent
+        self.input_username.focusOutEvent =self.focusOutEvent
         self.input_pass.focusInEvent =self.focusInEvent
-        # self.input_pass.focusOutEvent =self.focusOutEvent
+        self.input_pass.focusOutEvent =self.focusOutEvent
 
 # create class for our Raspberry Pi GUI
 class Rework(QMainWindow, rework.Ui_Form):
