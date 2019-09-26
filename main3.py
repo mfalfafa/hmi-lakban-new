@@ -134,7 +134,7 @@ class MonitorLineDataThread(QThread):
             data_ready = False
             try:
                 headers = {'Authorization': 'Bearer ' + JwToken, 'content-type': 'application/json'}
-                line_data = requests.get("http://192.168.3.2:8081/api/v1/rencana-produksi", headers=headers)
+                line_data = requests.get("http://192.168.13.2:8081/api/v1/rencana-produksi", headers=headers)
                 data_ready = True
                 print("Data")
                 if(str(line_data.status_code)=='200' or str(line_data.status_code)=='201'):
@@ -163,7 +163,7 @@ class LoadLineDataThread(QThread):
                 # headers={'Authorization': 'access_token '+ JwToken}
                 # auth = JWTAuth(str(JwToken))
                 headers = {'Authorization': 'Bearer ' + JwToken, 'content-type': 'application/json'}
-                line_data = requests.get("http://192.168.3.2:8081/api/v1/rencana-produksi", headers=headers)
+                line_data = requests.get("http://192.168.13.2:8081/api/v1/rencana-produksi", headers=headers)
                 data_ready = True
                 print(line_data.text)
                 print(line_data.status_code)
@@ -373,7 +373,7 @@ class Login(QMainWindow, login.Ui_Form):
         #Create authentication header
         headers = {'Authorization': 'JwToken' + ' ', 'content-type': 'application/json'}
         try:
-            r = requests.post("http://192.168.3.2:8081/api/v1/auth/login", headers=headers, json={"username": username, "password": password, "roleId":1})
+            r = requests.post("http://192.168.13.2:8081/api/v1/auth/login", headers=headers, json={"username": username, "password": password, "roleId":1})
             if(str(r.status_code)=="200" or str(r.status_code)=="201"):
                 print("Login success")
                 print(r.text)
@@ -839,6 +839,7 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
 
     def insertCBDate(self, data):
         self.cb_set_date.clear()
+        # Limit date that is showed to just 2 date, current and yesterday
         n=len(data)
         if n<=2:
             for i in range(n):
