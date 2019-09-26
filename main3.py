@@ -65,6 +65,7 @@ init_cb=False
 JwToken=''
 firstname=''
 lastname=''
+cb_data=[]
 
 # components
 line_val = ''
@@ -811,12 +812,14 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
         # for i in range(len(self.data_po)):
 
     def updateCBDate(self, data):
+        global cb_data
         # new data from web
         new_data = sorted(set(data))
         print("new data : "+ str(set(new_data)))
         print(len(new_data))
         # current data in cb
-        current_data = sorted(set([self.cb_set_date.itemText(i) for i in range(self.cb_set_date.count())]))
+        # current_data = sorted(set([self.cb_set_date.itemText(i) for i in range(self.cb_set_date.count())]))
+        current_data = sorted(set(cb_data))
         print("current date: "+ str(current_data))
         print(len(current_data))
         # get added data
@@ -838,8 +841,10 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
         # print(new_data)
 
     def insertCBDate(self, data):
+        global cb_data
         self.cb_set_date.clear()
         # Limit date that is showed to just 2 date, current and yesterday
+        cb_data=data
         n=len(data)
         if n<=2:
             for i in range(n):
