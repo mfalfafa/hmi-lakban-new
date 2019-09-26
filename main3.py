@@ -876,8 +876,9 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
             self.addWidget(self.cb_set_date.currentText(), all_data)    
 
     def logout(self):
-        global JwToken, loginwin
+        global JwToken, loginwin, cb_data
         JwToken=''
+        cb_data=[]
         self.close()
         loginwin=Login()
         loginwin.show()

@@ -1,13 +1,13 @@
 # HTTP Request test
 # http://samuelofficial.id/db/nabati_hmi_test_lanius/get_line_data.php
 import requests
-from requests_jwt import JWTAuth
+# from requests_jwt import JWTAuth
 
 import threading
 
 # always seem to need this
 import sys
-
+import subprocess
 # For PostgreSQL database
 # import psycopg2
 
@@ -65,6 +65,7 @@ init_cb=False
 JwToken=''
 firstname=''
 lastname=''
+cb_data=[]
 
 # components
 line_val = ''
@@ -89,6 +90,8 @@ clockThread = ''
 # MAC :
 # eth0 =  b8:27:eb:c3:8d:2f
 # wlan0 =  b8:27:eb:96:d8:7a
+# Virtul keyboard
+# https://stackoverflow.com/questions/49306865/matchbox-keyboard-on-input-for-qlineedit-pyqt5
 
 class clockThread(threading.Thread):
     def __init__(self):
@@ -131,8 +134,8 @@ class MonitorLineDataThread(QThread):
         while 1:
             data_ready = False
             try:
-                line_data = requests.get('http://ec2-13-250-42-181.ap-southeast-1.compute.amazonaws.com:8081/api/v1/rencana-produksi',
-                                         auth=('', ''))
+                headers = {'Authorization': 'Bearer ' + JwToken, 'content-type': 'application/json'}
+                line_data = requests.get("http://dev-oee-sim.machinevision.global:8081/api/v1/rencana-produksi", headers=headers)
                 data_ready = True
                 print("Data")
                 if(str(line_data.status_code)=='200' or str(line_data.status_code)=='201'):
@@ -159,9 +162,9 @@ class LoadLineDataThread(QThread):
                 print(JwToken)
                 headers = {'Authorization': 'token {}'.format(JwToken)}
                 # headers={'Authorization': 'access_token '+ JwToken}
-                auth = JWTAuth(str(JwToken))
+                # auth = JWTAuth(str(JwToken))
                 headers = {'Authorization': 'Bearer ' + JwToken, 'content-type': 'application/json'}
-                line_data = requests.get("http://ec2-13-250-42-181.ap-southeast-1.compute.amazonaws.com:8081/api/v1/rencana-produksi", headers=headers)
+                line_data = requests.get("http://dev-oee-sim.machinevision.global:8081/api/v1/rencana-produksi", headers=headers)
                 data_ready = True
                 print(line_data.text)
                 print(line_data.status_code)
@@ -205,64 +208,84 @@ class Popup(QMainWindow, popup.Ui_Form):
 
 class Numpad(QMainWindow, numpad.Ui_Form):
     def pb_1_click(self):
-        if (self.lbl_val.text() == '0'):
-            self.lbl_val.setText('1')
-        else:
-            self.lbl_val.setText(self.lbl_val.text() + '1')
+        n=len(self.lbl_val.text())
+        if n<=9:
+            if (self.lbl_val.text() == '0'):
+                self.lbl_val.setText('1')
+            else:
+                self.lbl_val.setText(self.lbl_val.text() + '1')
 
     def pb_2_click(self):
-        if (self.lbl_val.text() == '0'):
-            self.lbl_val.setText('2')
-        else:
-            self.lbl_val.setText(self.lbl_val.text() + '2')
+        n=len(self.lbl_val.text())
+        if n<=9:
+            if (self.lbl_val.text() == '0'):
+                self.lbl_val.setText('2')
+            else:
+                self.lbl_val.setText(self.lbl_val.text() + '2')
 
     def pb_3_click(self):
-        if (self.lbl_val.text() == '0'):
-            self.lbl_val.setText('3')
-        else:
-            self.lbl_val.setText(self.lbl_val.text() + '3')
+        n=len(self.lbl_val.text())
+        if n<=9:
+            if (self.lbl_val.text() == '0'):
+                self.lbl_val.setText('3')
+            else:
+                self.lbl_val.setText(self.lbl_val.text() + '3')
 
     def pb_4_click(self):
-        if (self.lbl_val.text() == '0'):
-            self.lbl_val.setText('4')
-        else:
-            self.lbl_val.setText(self.lbl_val.text() + '4')
+        n=len(self.lbl_val.text())
+        if n<=9:
+            if (self.lbl_val.text() == '0'):
+                self.lbl_val.setText('4')
+            else:
+                self.lbl_val.setText(self.lbl_val.text() + '4')
 
     def pb_5_click(self):
-        if (self.lbl_val.text() == '0'):
-            self.lbl_val.setText('5')
-        else:
-            self.lbl_val.setText(self.lbl_val.text() + '5')
+        n=len(self.lbl_val.text())
+        if n<=9:
+            if (self.lbl_val.text() == '0'):
+                self.lbl_val.setText('5')
+            else:
+                self.lbl_val.setText(self.lbl_val.text() + '5')
 
     def pb_6_click(self):
-        if (self.lbl_val.text() == '0'):
-            self.lbl_val.setText('6')
-        else:
-            self.lbl_val.setText(self.lbl_val.text() + '6')
+        n=len(self.lbl_val.text())
+        if n<=9:
+            if (self.lbl_val.text() == '0'):
+                self.lbl_val.setText('6')
+            else:
+                self.lbl_val.setText(self.lbl_val.text() + '6')
 
     def pb_7_click(self):
-        if (self.lbl_val.text() == '0'):
-            self.lbl_val.setText('7')
-        else:
-            self.lbl_val.setText(self.lbl_val.text() + '7')
+        n=len(self.lbl_val.text())
+        if n<=9:
+            if (self.lbl_val.text() == '0'):
+                self.lbl_val.setText('7')
+            else:
+                self.lbl_val.setText(self.lbl_val.text() + '7')
 
     def pb_8_click(self):
-        if (self.lbl_val.text() == '0'):
-            self.lbl_val.setText('8')
-        else:
-            self.lbl_val.setText(self.lbl_val.text() + '8')
+        n=len(self.lbl_val.text())
+        if n<=9:
+            if (self.lbl_val.text() == '0'):
+                self.lbl_val.setText('8')
+            else:
+                self.lbl_val.setText(self.lbl_val.text() + '8')
 
     def pb_9_click(self):
-        if (self.lbl_val.text() == '0'):
-            self.lbl_val.setText('9')
-        else:
-            self.lbl_val.setText(self.lbl_val.text() + '9')
+        n=len(self.lbl_val.text())
+        if n<=9:
+            if (self.lbl_val.text() == '0'):
+                self.lbl_val.setText('9')
+            else:
+                self.lbl_val.setText(self.lbl_val.text() + '9')
 
     def pb_0_click(self):
-        if (self.lbl_val.text() == '0'):
-            self.lbl_val.setText('0')
-        else:
-            self.lbl_val.setText(self.lbl_val.text() + '0')
+        n=len(self.lbl_val.text())
+        if n<=9:
+            if (self.lbl_val.text() == '0'):
+                self.lbl_val.setText('0')
+            else:
+                self.lbl_val.setText(self.lbl_val.text() + '0')
 
     def pb_enter_click(self):
         # self.parent.rework_val.setText(self.lbl_val.text())
@@ -325,8 +348,22 @@ class Numpad(QMainWindow, numpad.Ui_Form):
 
 # Login window
 class Login(QMainWindow, login.Ui_Form):
+    def focusInEvent(self, event):
+        print("focus in event")
+        try:
+            subprocess.Popen(["matchbox-keyboard"])
+        except FileNotFoundError:
+            pass
+
+    def focusOutEvent(self, event):
+        print("focus Out event")
+        try:
+            subprocess.Popen(["killall","matchbox-keyboard"])
+        except:
+            print("Error")
+
     def login(self):
-        global popupwin, JwToken, firstname, lastname
+        global popupwin, JwToken, firstname, lastname, cb_data
         # Loading text
         self.txt_loading.setVisible(True)
         username=self.input_username.text()
@@ -337,7 +374,7 @@ class Login(QMainWindow, login.Ui_Form):
         #Create authentication header
         headers = {'Authorization': 'JwToken' + ' ', 'content-type': 'application/json'}
         try:
-            r = requests.post("http://ec2-13-250-42-181.ap-southeast-1.compute.amazonaws.com:8081/api/v1/auth/login", headers=headers, json={"username": username, "password": password, "roleId":1})
+            r = requests.post("http://dev-oee-sim.machinevision.global:8081/api/v1/auth/login", headers=headers, json={"username": username, "password": password, "roleId":1})
             if(str(r.status_code)=="200" or str(r.status_code)=="201"):
                 print("Login success")
                 print(r.text)
@@ -353,11 +390,14 @@ class Login(QMainWindow, login.Ui_Form):
                 popupwin.show()
             else:
                 print(r.status_code)
+                cb_data=[]
             self.txt_loading.setVisible(False)
         except Exception as e:
             self.txt_loading.setVisible(False)
             print("Error : "+ str(e))
 
+    def focus(self):
+        print("Focus")
 
     def __init__(self):
         # QMainWindow.__init__(self, parent)
@@ -370,6 +410,10 @@ class Login(QMainWindow, login.Ui_Form):
         self.move(qtRectangle.topLeft())
         self.pb_login.clicked.connect(self.login)
         self.txt_loading.setVisible(False)
+        self.input_username.focusInEvent =self.focusInEvent
+        self.input_username.focusOutEvent =self.focusOutEvent
+        self.input_pass.focusInEvent =self.focusInEvent
+        self.input_pass.focusOutEvent =self.focusOutEvent
 
 # create class for our Raspberry Pi GUI
 class Rework(QMainWindow, rework.Ui_Form):
@@ -383,7 +427,7 @@ class Rework(QMainWindow, rework.Ui_Form):
 
     def update_rework_val(self, total, rencanaProduksiId):
         head = {"Authorization":"Token token="}
-        url = 'http://ec2-13-250-42-181.ap-southeast-1.compute.amazonaws.com:8081/api/v1/lakban/rework'
+        url = 'http://dev-oee-sim.machinevision.global:8081/api/v1/lakban/rework'
         payload = {'total' : total, 'rencanaProduksiId' : rencanaProduksiId }
         try:
             r = requests.patch(url, payload)
@@ -393,11 +437,14 @@ class Rework(QMainWindow, rework.Ui_Form):
                 self.parent.updateF=1
             else:
                 print(r.status_code)
+            self.txt_loading.setVisible(False)
         except Exception as e:
             print("Error : "+ str(e))
+            self.txt_loading.setVisible(False)
 
 
     def submit_rework(self):
+        self.txt_loading.setVisible(True)
         self.parent.setEnabled(True)
         selisih = int(self.parent.lbl_total.text()) - int(self.rework_val.text())
         self.parent.lbl_total.setText(str(selisih))
@@ -697,20 +744,25 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
         self.lbl_total.setText(str(val))
 
     def update_total_finish_good(self, total, rencanaProduksiId):
-        global aaa, alldata
+        global aaa, alldata, JwToken
         try:
-            r = requests.post("http://ec2-13-250-42-181.ap-southeast-1.compute.amazonaws.com:8081/api/v1/lakban/finishgood", data={'total': total, 'rencanaProduksiId': rencanaProduksiId})
+            # headers = {'Authorization': 'JwToken' + ' ', 'content-type': 'application/json'}
+            r = requests.post("http://dev-oee-sim.machinevision.global:8081/api/v1/lakban/finishgood", data={'total': total, 'rencanaProduksiId': rencanaProduksiId})
             if(str(r.status_code)=="200" or str(r.status_code)=="201"):
                 print("Update success")
+                print(r.text)
                 # aaa.lbl_total.setText(self.lbl_total.text())
                 self.updateF=1
             else:
                 print(r.status_code)
+            self.txt_loading.setVisible(False)
         except Exception as e:
             print("Error : "+ str(e))
+            self.txt_loading.setVisible(False)
 
     def update(self):
         global aaa
+        self.txt_loading.setVisible(True)
         print('Update : '+ aaa.lbl_po.text())
         print('Rencana produksi ID : '+ str(aaa.rencanaProduksiId))
         print('Update : '+ aaa.lbl_total.text())
@@ -723,14 +775,29 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
         self.val = self.lbl_total.text()
         Numpad(self).show()
 
+    def extract_time(self, alldata):
+        try:
+            return int(alldata['date'])
+        except KeyError:
+            return 0
+
     def addWidget(self, current_date, alldata):
         # Delete all data
         for i in reversed(range(self.gridLayout.count())):
             self.gridLayout.itemAt(i).widget().setParent(None)
 
+        #====== sort of the date of data ======
+        alldata2=[]
+        if(len(alldata)>0):
+            alldata = sorted(alldata, key=lambda k: k['date'], reverse=True)
+            for data in alldata:
+                alldata2.append(data)
+            alldata=(alldata2)
+
+        self.numAddWidget=0
         for i in range(len(alldata)):
             if(alldata[i]['date']==current_date):
-                self.numAddWidget = i + 1
+                self.numAddWidget += 1
                 self.po = alldata[i]['po_number']
                 self.shift = alldata[i]['shiftId']
                 self.total = alldata[i]['b_finishgood_qty_karton']
@@ -739,17 +806,21 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
                 self.widget = ExampleWidget2(self.numAddWidget, self.po, self.shift, self.total, self.line, self,
                                              self.pb_set_total)
                 self.gridLayout.addWidget(self.widget)
+            else:
+                self.numAddWidget=0
 
         # Insert data based on the date that is selected
         # for i in range(len(self.data_po)):
 
     def updateCBDate(self, data):
+        global cb_data
         # new data from web
         new_data = sorted(set(data))
         print("new data : "+ str(set(new_data)))
         print(len(new_data))
         # current data in cb
-        current_data = sorted(set([self.cb_set_date.itemText(i) for i in range(self.cb_set_date.count())]))
+        # current_data = sorted(set([self.cb_set_date.itemText(i) for i in range(self.cb_set_date.count())]))
+        current_data = sorted(set(cb_data))
         print("current date: "+ str(current_data))
         print(len(current_data))
         # get added data
@@ -771,15 +842,25 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
         # print(new_data)
 
     def insertCBDate(self, data):
+        global cb_data
         self.cb_set_date.clear()
-        for i in range(len(data)):
-            self.cb_set_date.addItem(data[i])
-        self.cb_set_date.setCurrentIndex(0)
+        # Limit date that is showed to just 2 date, current and yesterday
+        cb_data=data
+        n=len(data)
+        if n<=2:
+            for i in range(n):
+                self.cb_set_date.addItem(data[i])
+            self.cb_set_date.setCurrentIndex(0)
+        else:
+            for i in range(2):
+                self.cb_set_date.addItem(data[(n-1)-i])
+            self.cb_set_date.setCurrentIndex(0)
 
     def getData(self, data):
         global all_data, init_cb
         try:
             self.all_data=data
+            print(data)
             data=json.loads(data)
             data_date=[]
             for i in range(len(data)):
@@ -797,12 +878,12 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
             self.addWidget(self.cb_set_date.currentText(), all_data)    
 
     def logout(self):
-        global JwToken, loginwin
+        global JwToken, loginwin, cb_data
         JwToken=''
+        cb_data=[]
         self.close()
         loginwin=Login()
         loginwin.show()
-
 
     def __init__(self, parent):
         global firstname, lastname
