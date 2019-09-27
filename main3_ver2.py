@@ -66,6 +66,7 @@ JwToken=''
 firstname=''
 lastname=''
 cb_data=[]
+logout_f=False
 
 # components
 line_val = ''
@@ -130,8 +131,8 @@ class MonitorLineDataThread(QThread):
 
     # run method gets called when we start the thread
     def run(self):
-        global line_data, data_ready
-        while 1:
+        global line_data, data_ready, logout_f
+        while not logout_f:
             data_ready = False
             try:
                 headers = {'Authorization': 'Bearer ' + JwToken, 'content-type': 'application/json'}
@@ -363,7 +364,8 @@ class Login(QMainWindow, login.Ui_Form):
             print("Error")
 
     def login(self):
-        global popupwin, JwToken, firstname, lastname, cb_data
+        global popupwin, JwToken, firstname, lastname, cb_data, logout_f
+        logout_f=False
         # Loading text
         self.txt_loading.setVisible(True)
         username=self.input_username.text()
@@ -878,9 +880,10 @@ class MainWindow(QMainWindow, mainwindow.Ui_MainWindow):
             self.addWidget(self.cb_set_date.currentText(), all_data)    
 
     def logout(self):
-        global JwToken, loginwin, cb_data
+        global JwToken, loginwin, cb_data, logout_f
         JwToken=''
         cb_data=[]
+        logout_f=True
         self.close()
         loginwin=Login()
         loginwin.show()
